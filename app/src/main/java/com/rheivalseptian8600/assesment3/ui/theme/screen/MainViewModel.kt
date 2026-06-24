@@ -67,18 +67,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val response = ProductApi.service.getProducts()
 
-                val updatedList = response.products.mapIndexed { index, product ->
-                    if (index < 2) product.copy(mine = "1") else product
-                }
-
-                val entities = updatedList.map {
+                val entities = response.products.map {
                     ProductEntity(
                         id = it.id ?: 0,
                         title = it.title,
                         price = it.price,
                         description = it.description,
                         thumbnail = it.thumbnail as? String,
-                        mine = it.mine ?: "0"
+                        mine = "0"
                     )
                 }
 

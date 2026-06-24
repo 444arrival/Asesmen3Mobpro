@@ -172,7 +172,10 @@ fun MainScreen() {
                 user = user,
                 onDismissRequest = { showDialog = false }
             ) {
-                CoroutineScope(Dispatchers.IO).launch { signOut(context, dataStore) }
+                CoroutineScope(Dispatchers.IO).launch {
+                    signOut(context, dataStore)
+                    viewModel.retrieveData("")
+                }
                 showDialog = false
             }
         }
@@ -292,12 +295,18 @@ fun ScreenContent(
         }
 
         ProductApi.ApiStatus.SUCCESS -> {
+            val filteredData = if (userId.isEmpty()) {
+                data.filter { it.mine != "1" }
+            } else {
+                data
+            }
+
             LazyVerticalGrid(
                 modifier = modifier.fillMaxSize().padding(4.dp),
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
-                items(data) { product ->
+                items(filteredData) { product ->
                     ListItem(
                         product = product,
                         onDelete = {
